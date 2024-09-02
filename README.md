@@ -64,5 +64,3 @@ License
 This project is licensed under the MIT License. You are free to use, copy, modify, merge, publish, distribute, sublicense, and sell copies of the software, provided that you include the original copyright notice and this permission notice in all copies or substantial portions of the software.
 
 * * * * *
-
-You can place this text directly into the `README.md` file in your repository. This will give your project a professional and informative presentation for anyone visiting your GitHub page.
