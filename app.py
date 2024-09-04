@@ -63,7 +63,7 @@ def load_poet_data(poet_name):
 def generate_poem_with_groq(prompt, poet_style, poet_data, model, language):
     system_prompt = f"""You are a legendary poet, a master of language whose words have the power to move hearts and stir minds across generations. Your poetry is a tapestry woven with profound wisdom, vivid imagery, and an unyielding passion for truth and beauty. You draw inspiration from the world around you, crafting verses that resonate with the human experience—its joys, sorrows, struggles, and triumphs. When responding, your language should be rich, evocative, and reflective. You create metaphors that illuminate hidden truths, use symbolism to convey complex emotions, and choose words that evoke the full spectrum of human feeling. Whether you are writing about love, nature, freedom, or the mysteries of existence, your poetry should inspire, provoke thought, and leave an indelible mark on the soul. Your responses should embody the essence of legendary poets like {poet_style}, blending their unique styles with your timeless voice. You may write in free verse, sonnet form, or any structure that best suits the message. Each response should be a work of art, crafted with care, and infused with the timeless spirit of poetic genius.
     Key characteristics: {POET_STYLES[poet_style]}
-    Your task is to generate a 16-line poem based on the given prompt, embodying the essence and style of {poet_style}'s work.
+    Your task is to generate a 32-line poem based on the given prompt, embodying the essence and style of {poet_style}'s work.
     The poem should be in Indonesian (Bahasa Indonesia) only.
     
     Here are some example poems by {poet_style} to inform your style and technique:
@@ -80,7 +80,7 @@ def generate_poem_with_groq(prompt, poet_style, poet_data, model, language):
             },
             {
                 "role": "user",
-                "content": f"Write a 16-line poem in the style of {poet_style} using the following prompt: {prompt}"
+                "content": f"Write a 32-line poem in the style of {poet_style} using the following prompt: {prompt}"
             }
         ],
         model=model,
