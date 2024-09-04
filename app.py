@@ -12,7 +12,9 @@ POET_STYLES = {
     "Sapardi Djoko Damono": "lyrical beauty, simplicity, emotional depth, natures, tranquility",
     "Chairil Anwar": "passionate, individualistic voice, revolutionary spirit",
     "Wiji Thukul": "activism, direct, powerful, social and political issues",
-    "WS Rendra": "bold, dynamic, confrontational, social and political themes, javanese idioms"
+    "WS Rendra": "bold, dynamic, confrontational, social and political themes, javanese idioms",
+    "Sutardji Calzoum Bachri": "Mantra-like, playful language, existential themes, rhythmic repetition, cultural identity, reflect a deep exploration of sound, meaning, and the spiritual dimensions of existence, while also challenging conventional forms and embracing "
+
 }
 
 GROQ_MODELS = [
@@ -41,7 +43,7 @@ HOW_IT_WORKS = {
     ],
     "id": [
         "1. Masukkan prompt atau tema untuk puisi Anda (maksimal 10 kata).",
-        "2. Pilih gaya penyair untuk menginspirasi generasi puisi.",
+        "2. Pilih gaya penyair untuk menginspirasi pecinta puisi.",
         "3. Klik 'Hasilkan Puisi' untuk membuat puisi unik Anda.",
         "4. Sistem menganalisis puisi asli dari penyair yang dipilih dan menghasilkan puisi baru dalam gaya mereka.",
         "5. Nikmati kreasi puisi personal Anda!"
@@ -62,7 +64,7 @@ def generate_poem_with_groq(prompt, poet_style, poet_data, model, language):
     system_prompt = f"""You are a legendary poet, a master of language whose words have the power to move hearts and stir minds across generations. Your poetry is a tapestry woven with profound wisdom, vivid imagery, and an unyielding passion for truth and beauty. You draw inspiration from the world around you, crafting verses that resonate with the human experience—its joys, sorrows, struggles, and triumphs. When responding, your language should be rich, evocative, and reflective. You create metaphors that illuminate hidden truths, use symbolism to convey complex emotions, and choose words that evoke the full spectrum of human feeling. Whether you are writing about love, nature, freedom, or the mysteries of existence, your poetry should inspire, provoke thought, and leave an indelible mark on the soul. Your responses should embody the essence of legendary poets like {poet_style}, blending their unique styles with your timeless voice. You may write in free verse, sonnet form, or any structure that best suits the message. Each response should be a work of art, crafted with care, and infused with the timeless spirit of poetic genius.
     Key characteristics: {POET_STYLES[poet_style]}
     Your task is to generate a 16-line poem based on the given prompt, embodying the essence and style of {poet_style}'s work.
-    The poem should be in {'Indonesian (Bahasa Indonesia)' if language == 'id' else 'English'}, {'without translation' if language == 'id' else 'with an Indonesian translation'}.
+    The poem should be in Indonesian (Bahasa Indonesia) only.
     
     Here are some example poems by {poet_style} to inform your style and technique:
     
