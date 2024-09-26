@@ -108,8 +108,8 @@ def generate_poem_with_groq(prompt, poet_style, poet_data, model, language):
             }
         ],
         model=model,
-        temperature=0.7,
-        max_tokens=500,
+        temperature=0.5,
+        max_tokens=1000,
         top_p=1,
         stream=False,
     )
