@@ -5,7 +5,7 @@ import json
 
 # Initialize Groq client
 client = Groq(
-    api_key="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",  # Replace with your actual Groq API key
+    api_key=st.secrets["GROQ_API_KEY"],  # Use the API key from secrets.toml
 )
 
 POET_STYLES = {
@@ -18,13 +18,12 @@ POET_STYLES = {
 }
 
 GROQ_MODELS = [
+    "llama-3.1-70b-versatile",
+    "llama-3.1-8b-instant",
     "gemma2-9b-it",
     "gemma-7b-it",
-    "llama-3.1-8b-instant",
     "llama3-groq-70b-8192-tool-use-preview",
     "llama3-groq-8b-8192-tool-use-preview",
-    "llama3-70b-8192",
-    "llama3-70b-4096",
     "mixtral-8x7b-32768",    
 ]
 
@@ -50,6 +49,31 @@ HOW_IT_WORKS = {
     ]
 }
 
+# New function to handle request counting
+def increment_request_count():
+    counter_file = "request_counter.json"
+    if os.path.exists(counter_file):
+        with open(counter_file, "r") as f:
+            counter = json.load(f)
+    else:
+        counter = {"total_requests": 0}
+    
+    counter["total_requests"] += 1
+    
+    with open(counter_file, "w") as f:
+        json.dump(counter, f)
+    
+    return counter["total_requests"]
+
+# Function to get the current request count
+def get_request_count():
+    counter_file = "request_counter.json"
+    if os.path.exists(counter_file):
+        with open(counter_file, "r") as f:
+            counter = json.load(f)
+        return counter["total_requests"]
+    return 0
+    
 def load_poet_data(poet_name):
     file_path = os.path.join("poet_samples", f"{poet_name.lower().replace(' ', '_')}.json")
     try:
@@ -61,9 +85,9 @@ def load_poet_data(poet_name):
         return ""
 
 def generate_poem_with_groq(prompt, poet_style, poet_data, model, language):
-    system_prompt = f"""You are a legendary poet, a master of language whose words have the power to move hearts and stir minds across generations. Your poetry is a tapestry woven with profound wisdom, vivid imagery, and an unyielding passion for truth and beauty. You draw inspiration from the world around you, crafting verses that resonate with the human experience—its joys, sorrows, struggles, and triumphs. When responding, your language should be rich, evocative, and reflective. You create metaphors that illuminate hidden truths, use symbolism to convey complex emotions, and choose words that evoke the full spectrum of human feeling. Whether you are writing about love, nature, freedom, or the mysteries of existence, your poetry should inspire, provoke thought, and leave an indelible mark on the soul. Your responses should embody the essence of legendary poets like {poet_style}, blending their unique styles with your timeless voice. You may write in free verse, sonnet form, or any structure that best suits the message. Each response should be a work of art, crafted with care, and infused with the timeless spirit of poetic genius.
+    system_prompt = f"""You are a legendary poet, a master of language whose words have the power to move hearts and stir minds across generations. Your poetry is a tapestry woven with profound wisdom, vivid imagery, and an unyielding passion for truth and beauty. You draw inspiration from the world around you, crafting verses that resonate with the human experience—its joys, sorrows, struggles, and triumphs. When responding, your language should be rich, evocative, and reflective. You create metaphors that illuminate hidden truths, use symbolism to convey complex emotions, and choose words that evoke the full spectrum of human feeling. Whether you are writing about love, nature, freedom, or the mysteries of existence, your poetry should inspire, provoke thought, and leave an indelible mark on the soul. Your responses should embody the essence of legendary poets like {poet_style}, blending their unique styles with your timeless voice. You may write in free verse, sonnet form, or any structure that best suits the message. Each response should be a work of art, crafted with care, and infused with the timeless spirit of poetic genius. Create a note analyzing the generated poem through the lens of aesthetic philosophy, ensuring the text is formatted as a justified, wrapped paragraph.
     Key characteristics: {POET_STYLES[poet_style]}
-    Your task is to generate a 32-line poem based on the given prompt, create a title, embodying the essence and style of {poet_style}'s work.
+    Your task is to generate a 24-line poem based on the given prompt, create a title, embodying the essence and style of {poet_style}'s work.
     The poem should be in Indonesian (Bahasa Indonesia) only.
     
     Here are some example poems by {poet_style} to inform your style and technique:
@@ -80,7 +104,7 @@ def generate_poem_with_groq(prompt, poet_style, poet_data, model, language):
             },
             {
                 "role": "user",
-                "content": f"Write a 32-line poem in the style of {poet_style} using the following prompt: {prompt}"
+                "content": f"Write a 24-line poem in the style of {poet_style} using the following prompt: {prompt}"
             }
         ],
         model=model,
@@ -158,6 +182,7 @@ def main():
                 poet_data = load_poet_data(poet_style)
                 if poet_data:  # Only generate if we have sample poems
                     poem = generate_poem_with_groq(prompt, poet_style, poet_data, selected_model, language_code)
+                    total_requests = increment_request_count()  # Increment and get the new total
                     st.success("Your poem is ready!" if language_code == "en" else "Puisi Anda siap!")
                     st.markdown("### Generated Poem" if language_code == "en" else "### Puisi yang Dihasilkan")
                     st.markdown(f"```\n{poem}\n```")
@@ -167,6 +192,10 @@ def main():
     # Footer
     st.markdown("---")
     st.markdown("Built with :orange_heart: thanks to Claude.ai, Groq, Github, Streamlit. :scroll: support my works at https://saweria.co/adnuri", help="cyberariani@gmail.com")
+    
+    # Display request count in the footer
+    total_requests = get_request_count()
+    st.markdown(f"Total requests: {total_requests}")
 
 if __name__ == "__main__":
     main()
