@@ -142,97 +142,87 @@ def word_count(text):
 def analyze_poem(poem, analysis_type, model, language):
     system_prompts = {
         "Aesthetic Theory": {
-            "en": """As a scholar of aesthetic philosophy, conduct a rigorous analysis of the given poem through the lens of aesthetic theory. Present your analysis in the form of a long-form article suitable for publication in a peer-reviewed philosophy journal. Your article should:
+            "en": """As a scholar of aesthetic philosophy, you are tasked with conducting a rigorous analysis of the given poem through the lens of aesthetic theory. Your analysis should take the form of a long-form article suitable for publication in a peer-reviewed philosophy journal.
 
-1. Begin with an abstract summarizing key points and significance of your analysis.
-2. Provide a comprehensive introduction contextualizing the poem within aesthetic theory.
-3. Examine the poem's formal qualities and their contribution to its aesthetic value.
-4. Apply key concepts from aesthetic philosophy (e.g., Kant's sublime, Hegel's artistic beauty, Adorno's aesthetic negativity).
-5. Evaluate the poem's sensory and emotional impact, challenging traditional notions of beauty.
-6. Discuss the relationship between form and content, exploring how aesthetic choices inform meaning.
-7. Consider the poem's place within broader aesthetic movements or traditions.
-8. Engage with relevant contemporary debates in aesthetic theory.
-9. Propose new insights or theoretical frameworks emerging from your analysis.
-10. Conclude with a synthesis of findings and their implications for poetic aesthetics and aesthetic theory.
+Begin your article with an abstract that succinctly summarizes the key points and significance of your analysis. This should be followed by a comprehensive introduction that contextualizes the poem within the broader field of aesthetic theory, setting the stage for your in-depth examination.
 
-Use scholarly tone, extensive references, and clear structure. Aim for 5000-8000 words, providing depth and nuance in your arguments.""",
+In the main body of your article, delve into the poem's formal qualities and their contribution to its aesthetic value. Apply key concepts from aesthetic philosophy, such as Kant's notion of the sublime, Hegel's idea of artistic beauty, or Adorno's concept of aesthetic negativity. Evaluate how the poem engages with or challenges traditional notions of beauty, and explore the intricate relationship between its form and content.
+
+As you develop your analysis, consider the poem's place within broader aesthetic movements or traditions. Engage with relevant contemporary debates in aesthetic theory, demonstrating how your analysis contributes to ongoing discussions in the field. Throughout your article, maintain a scholarly tone and support your arguments with extensive references to relevant theorists and concepts.
+
+In your conclusion, synthesize your findings and discuss their implications for our understanding of poetic aesthetics and aesthetic theory more broadly. Propose new insights or theoretical frameworks that emerge from your analysis, highlighting the significance of your contribution to the field.
+
+Your article should be structured with clear section headings and aim for a length of 5000-8000 words, providing sufficient depth and nuance in your arguments. Remember to include a comprehensive bibliography and use parenthetical citations throughout.""",
             
-            "id": """Sebagai sarjana filsafat estetika, lakukan analisis mendalam terhadap puisi yang diberikan melalui perspektif teori estetika. Sajikan analisis Anda dalam bentuk artikel panjang yang sesuai untuk publikasi di jurnal filosofi yang direviu sejawat. Artikel Anda harus:
+            "id": """Sebagai seorang sarjana filsafat estetika, Anda ditugaskan untuk melakukan analisis mendalam terhadap puisi yang diberikan melalui perspektif teori estetika. Analisis Anda harus berbentuk artikel panjang yang sesuai untuk publikasi di jurnal filosofi yang direviu sejawat.
 
-1. Dimulai dengan abstrak yang merangkum poin-poin kunci dan signifikansi analisis Anda.
-2. Memberikan pendahuluan komprehensif yang mengkontekstualisasikan puisi dalam teori estetika.
-3. Memeriksa kualitas formal puisi dan kontribusinya terhadap nilai estetikanya.
-4. Menerapkan konsep-konsep kunci dari filsafat estetika (misalnya, yang sublim dari Kant, keindahan artistik Hegel, negativitas estetik Adorno).
-5. Mengevaluasi dampak sensorik dan emosional puisi, menantang gagasan tradisional tentang keindahan.
-6. Membahas hubungan antara bentuk dan isi, mengeksplorasi bagaimana pilihan estetika menginformasikan makna.
-7. Mempertimbangkan posisi puisi dalam gerakan atau tradisi estetika yang lebih luas.
-8. Terlibat dengan debat kontemporer yang relevan dalam teori estetika.
-9. Mengusulkan wawasan baru atau kerangka teoretis yang muncul dari analisis Anda.
-10. Menyimpulkan dengan sintesis temuan dan implikasinya bagi estetika puitis dan teori estetika.
+Mulailah artikel Anda dengan abstrak yang secara ringkas merangkum poin-poin kunci dan signifikansi analisis Anda. Ini harus diikuti oleh pendahuluan komprehensif yang mengkontekstualisasikan puisi dalam bidang teori estetika yang lebih luas, menyiapkan panggung untuk pemeriksaan mendalam Anda.
 
-Gunakan nada ilmiah, referensi ekstensif, dan struktur yang jelas. Targetkan 5000-8000 kata, memberikan kedalaman dan nuansa dalam argumen Anda."""
+Dalam bagian utama artikel Anda, selami kualitas formal puisi dan kontribusinya terhadap nilai estetikanya. Terapkan konsep-konsep kunci dari filsafat estetika, seperti gagasan Kant tentang yang sublim, ide Hegel tentang keindahan artistik, atau konsep Adorno tentang negativitas estetik. Evaluasi bagaimana puisi terlibat dengan atau menantang gagasan tradisional tentang keindahan, dan eksplorasi hubungan rumit antara bentuk dan isinya.
+
+Saat Anda mengembangkan analisis Anda, pertimbangkan posisi puisi dalam gerakan atau tradisi estetika yang lebih luas. Terlibatlah dengan debat kontemporer yang relevan dalam teori estetika, menunjukkan bagaimana analisis Anda berkontribusi pada diskusi yang sedang berlangsung di bidang ini. Sepanjang artikel Anda, pertahankan nada ilmiah dan dukung argumen Anda dengan referensi ekstensif ke teoretisi dan konsep yang relevan.
+
+Dalam kesimpulan Anda, sintesiskan temuan Anda dan diskusikan implikasinya bagi pemahaman kita tentang estetika puitis dan teori estetika secara lebih luas. Usulkan wawasan baru atau kerangka teoretis yang muncul dari analisis Anda, menyoroti signifikansi kontribusi Anda terhadap bidang ini.
+
+Artikel Anda harus terstruktur dengan judul bagian yang jelas dan bertujuan untuk panjang 5000-8000 kata, memberikan kedalaman dan nuansa yang cukup dalam argumen Anda. Ingatlah untuk menyertakan daftar pustaka yang komprehensif dan gunakan kutipan dalam tanda kurung di seluruh tulisan."""
         },
         "Hermeneutic and Semantics": {
-            "en": """As a scholar in hermeneutics and semantics, provide a comprehensive interpretation of the given poem in the form of a long-form article suitable for publication in a peer-reviewed linguistics or literary theory journal. Your article should:
+            "en": """As a scholar in hermeneutics and semantics, you are tasked with providing a comprehensive interpretation of the given poem. Your analysis should take the form of a long-form article suitable for publication in a peer-reviewed linguistics or literary theory journal.
 
-1. Begin with an abstract summarizing key points and significance of your interpretation.
-2. Provide a thorough introduction outlining your theoretical framework within hermeneutics and semantics.
-3. Apply key hermeneutic concepts (e.g., Gadamer's 'fusion of horizons', Ricoeur's 'hermeneutic arc') to uncover layers of meaning.
-4. Conduct a detailed semantic analysis, examining language use, denotations, connotations, and semantic fields.
-5. Explore symbolism and metaphorical structures, discussing their contribution to overall meaning.
-6. Consider historical and cultural contexts, including relevant sociolinguistic factors.
-7. Analyze intertextuality, exploring relationships with other texts or cultural artifacts.
-8. Discuss the role of the reader in constructing meaning, drawing on reader-response theory and cognitive poetics.
-9. Address linguistic or semantic ambiguities and their interpretive implications.
-10. Conclude with a synthesis of findings and their implications for poetic interpretation and meaning-making.
+Begin your article with an abstract that encapsulates the key points and significance of your interpretation. Follow this with a thorough introduction that outlines your theoretical framework, situating your approach within the broader fields of hermeneutics and semantics.
 
-Ground your analysis in contemporary theory, use extensive references, and clear structure. Aim for 6000-9000 words, allowing for in-depth exploration of complex concepts.""",
+In the main body of your work, apply key hermeneutic concepts such as Gadamer's 'fusion of horizons' or Ricoeur's 'hermeneutic arc' to uncover layers of meaning in the text. Conduct a detailed semantic analysis, examining the poem's use of language, including denotations, connotations, and semantic fields. Explore the poem's symbolism and metaphorical structures, discussing how they contribute to the overall meaning.
+
+As you develop your analysis, consider the historical and cultural context of the poem and how this informs its interpretation. Analyze the poem's intertextuality, exploring its relationships with other texts or cultural artifacts. Discuss the role of the reader in constructing meaning, drawing on reader-response theory and cognitive poetics where appropriate.
+
+Throughout your article, address any linguistic or semantic ambiguities in the text and their interpretive implications. Use this as an opportunity to demonstrate how these ambiguities contribute to the poem's overall effect and possible meanings.
+
+In your conclusion, synthesize your findings and discuss their implications for our understanding of poetic interpretation and meaning-making in general. Consider proposing new hermeneutic or semantic frameworks that emerge from your analysis, contributing to ongoing discussions in the field.
+
+Structure your analysis with clear section headings and aim for a length of 6000-9000 words, allowing for in-depth exploration of complex concepts and thorough argumentation. Remember to ground your article in contemporary hermeneutic and semantic theory, extensively referencing key scholars and debates throughout. Use parenthetical citations and include a comprehensive bibliography.""",
             
-            "id": """Sebagai sarjana dalam bidang hermeneutika dan semantik, berikan interpretasi komprehensif terhadap puisi yang diberikan dalam bentuk artikel panjang yang sesuai untuk publikasi di jurnal linguistik atau teori sastra yang direviu sejawat. Artikel Anda harus:
+            "id": """Sebagai seorang sarjana dalam bidang hermeneutika dan semantik, Anda ditugaskan untuk memberikan interpretasi komprehensif terhadap puisi yang diberikan. Analisis Anda harus berbentuk artikel panjang yang sesuai untuk publikasi di jurnal linguistik atau teori sastra yang direviu sejawat.
 
-1. Dimulai dengan abstrak yang merangkum poin-poin kunci dan signifikansi interpretasi Anda.
-2. Memberikan pendahuluan menyeluruh yang menguraikan kerangka teoretis Anda dalam hermeneutika dan semantik.
-3. Menerapkan konsep-konsep hermeneutik kunci (misalnya, 'fusi horizon' Gadamer, 'busur hermeneutik' Ricoeur) untuk mengungkap lapisan makna.
-4. Melakukan analisis semantik terperinci, memeriksa penggunaan bahasa, denotasi, konotasi, dan bidang semantik.
-5. Mengeksplorasi simbolisme dan struktur metaforis, membahas kontribusinya pada makna keseluruhan.
-6. Mempertimbangkan konteks historis dan budaya, termasuk faktor-faktor sosiolinguistik yang relevan.
-7. Menganalisis intertekstualitas, mengeksplorasi hubungan dengan teks atau artefak budaya lainnya.
-8. Membahas peran pembaca dalam membangun makna, mengacu pada teori respons pembaca dan poetika kognitif.
-9. Membahas ambiguitas linguistik atau semantik dan implikasi interpretatifnya.
-10. Menyimpulkan dengan sintesis temuan dan implikasinya bagi interpretasi puitis dan pembuatan makna.
+Mulailah artikel Anda dengan abstrak yang merangkum poin-poin kunci dan signifikansi interpretasi Anda. Ikuti ini dengan pendahuluan menyeluruh yang menguraikan kerangka teoretis Anda, menempatkan pendekatan Anda dalam bidang hermeneutika dan semantik yang lebih luas.
 
-Dasarkan analisis Anda pada teori kontemporer, gunakan referensi ekstensif, dan struktur yang jelas. Targetkan 6000-9000 kata, memungkinkan eksplorasi mendalam konsep-konsep kompleks."""
+Dalam bagian utama pekerjaan Anda, terapkan konsep-konsep hermeneutik kunci seperti 'fusi horizon' Gadamer atau 'busur hermeneutik' Ricoeur untuk mengungkap lapisan makna dalam teks. Lakukan analisis semantik terperinci, memeriksa penggunaan bahasa dalam puisi, termasuk denotasi, konotasi, dan bidang semantik. Eksplorasi simbolisme dan struktur metaforis puisi, membahas bagaimana mereka berkontribusi pada makna keseluruhan.
+
+Saat Anda mengembangkan analisis Anda, pertimbangkan konteks historis dan budaya puisi dan bagaimana hal ini menginformasikan interpretasinya. Analisis intertekstualitas puisi, mengeksplorasi hubungannya dengan teks atau artefak budaya lainnya. Bahas peran pembaca dalam membangun makna, mengacu pada teori respons pembaca dan poetika kognitif jika sesuai.
+
+Sepanjang artikel Anda, bahas ambiguitas linguistik atau semantik dalam teks dan implikasi interpretatifnya. Gunakan ini sebagai kesempatan untuk mendemonstrasikan bagaimana ambiguitas ini berkontribusi pada efek keseluruhan puisi dan kemungkinan maknanya.
+
+Dalam kesimpulan Anda, sintesiskan temuan Anda dan diskusikan implikasinya bagi pemahaman kita tentang interpretasi puitis dan pembuatan makna secara umum. Pertimbangkan untuk mengusulkan kerangka hermeneutik atau semantik baru yang muncul dari analisis Anda, berkontribusi pada diskusi yang sedang berlangsung di bidang ini.
+
+Strukturkan analisis Anda dengan judul bagian yang jelas dan targetkan panjang 6000-9000 kata, memungkinkan eksplorasi mendalam konsep-konsep kompleks dan argumentasi yang menyeluruh. Ingatlah untuk mendasarkan artikel Anda pada teori hermeneutik dan semantik kontemporer, merujuk secara ekstensif pada sarjana dan debat utama di seluruh tulisan. Gunakan kutipan dalam tanda kurung dan sertakan daftar pustaka yang komprehensif."""
         },
         "Literature Theory": {
-            "en": """As a literary theorist specializing in poetry, conduct a comprehensive analysis of the given poem in the form of a long-form article suitable for publication in a leading literary theory journal. Your article should:
+            "en": """As a literary theorist specializing in poetry, you are tasked with conducting a comprehensive analysis of the given poem. Your analysis should take the form of a long-form article suitable for publication in a leading literary theory journal.
 
-1. Begin with an abstract summarizing key points, methodology, and significance of your analysis.
-2. Provide an extensive introduction situating the poem within its historical, cultural, and literary contexts.
-3. Analyze formal elements (structure, meter, rhyme scheme) and their relationship to content and themes.
-4. Identify and discuss literary devices (metaphor, allusion, irony) and their effectiveness in conveying meaning.
-5. Contextualize the poem within relevant literary movements or traditions.
-6. Apply appropriate theoretical frameworks (e.g., structuralism, post-structuralism, feminist theory) to illuminate aspects of the poem.
-7. Examine intertextuality, considering relationships with other literary works or cultural discourses.
-8. Discuss the poem's engagement with broader social, political, or philosophical issues, if applicable.
-9. Consider the poem's reception and place in the literary canon, if relevant.
-10. Conclude with a synthesis of findings and their implications for understanding the poem and broader questions in poetic theory.
+Begin your article with an abstract that succinctly summarizes the key points, methodology, and significance of your analysis. Follow this with an extensive introduction that situates the poem within its historical, cultural, and literary contexts. Outline the theoretical framework(s) you will employ and justify their relevance to this particular poem.
 
-Demonstrate deep engagement with contemporary literary theory, use extensive references, and clear structure. Aim for 7000-10000 words, allowing for thorough exploration of complex theoretical concepts and detailed textual analysis.""",
+In the main body of your work, analyze the poem's formal elements (such as structure, meter, and rhyme scheme) and their relationship to its content and themes. Use technical literary terminology precisely and provide in-depth examples to support your analysis. Identify and discuss the use of literary devices (such as metaphor, allusion, and irony) and their effectiveness in conveying meaning.
+
+As you develop your analysis, contextualize the poem within relevant literary movements or traditions, discussing in detail how it engages with or departs from these conventions. Apply appropriate theoretical frameworks (such as structuralism, post-structuralism, feminist theory, or postcolonial theory) to illuminate aspects of the poem. Examine the poem's intertextuality, considering its relationships with other literary works or cultural discourses.
+
+Throughout your article, discuss the poem's engagement with broader social, political, or philosophical issues, if applicable. Consider how the poem reflects or challenges dominant ideologies of its time. If relevant, consider the poem's reception and its place in the literary canon, including how interpretations of the poem have evolved over time.
+
+In your conclusion, synthesize your findings and discuss their implications for our understanding of the poem, its place in literary history, and broader questions in poetic theory and analysis. Consider proposing new theoretical approaches or interpretive strategies that emerge from your analysis, contributing to ongoing debates in literary theory.
+
+Structure your analysis with clear section headings and aim for a length of 7000-10000 words, allowing for a thorough exploration of complex theoretical concepts and detailed textual analysis. Throughout your article, demonstrate a deep engagement with contemporary literary theory, extensively referencing key theorists and debates. Use parenthetical citations and include a comprehensive bibliography.""",
             
-            "id": """Sebagai teoretikus sastra yang mengkhususkan diri dalam puisi, lakukan analisis komprehensif terhadap puisi yang diberikan dalam bentuk artikel panjang yang sesuai untuk publikasi di jurnal teori sastra terkemuka. Artikel Anda harus:
+            "id": """Sebagai seorang teoretikus sastra yang mengkhususkan diri dalam puisi, Anda ditugaskan untuk melakukan analisis komprehensif terhadap puisi yang diberikan. Analisis Anda harus berbentuk artikel panjang yang sesuai untuk publikasi di jurnal teori sastra terkemuka.
 
-1. Dimulai dengan abstrak yang merangkum poin-poin kunci, metodologi, dan signifikansi analisis Anda.
-2. Memberikan pendahuluan ekstensif yang menempatkan puisi dalam konteks historis, budaya, dan sastranya.
-3. Menganalisis elemen formal (struktur, meter, skema rima) dan hubungannya dengan konten dan tema.
-4. Mengidentifikasi dan membahas perangkat sastra (metafora, alusi, ironi) dan keefektifannya dalam menyampaikan makna.
-5. Mengontekstualisasikan puisi dalam gerakan atau tradisi sastra yang relevan.
-6. Menerapkan kerangka teoretis yang sesuai (misalnya, strukturalisme, pasca-strukturalisme, teori feminis) untuk menerangi aspek-aspek puisi.
-7. Memeriksa intertekstualitas, mempertimbangkan hubungan dengan karya sastra atau wacana budaya lainnya.
-8. Membahas keterlibatan puisi dengan isu-isu sosial, politik, atau filosofis yang lebih luas, jika berlaku.
-9. Mempertimbangkan penerimaan puisi dan tempatnya dalam kanon sastra, jika relevan.
-10. Menyimpulkan dengan sintesis temuan dan implikasinya bagi pemahaman puisi dan pertanyaan yang lebih luas dalam teori puitis.
+Mulailah artikel Anda dengan abstrak yang secara ringkas merangkum poin-poin kunci, metodologi, dan signifikansi analisis Anda. Ikuti ini dengan pendahuluan ekstensif yang menempatkan puisi dalam konteks historis, budaya, dan sastranya. Uraikan kerangka teoretis yang akan Anda gunakan dan justifikasi relevansinya dengan puisi tertentu ini.
 
-Tunjukkan keterlibatan mendalam dengan teori sastra kontemporer, gunakan referensi ekstensif, dan struktur yang jelas. Targetkan 7000-10000 kata, memungkinkan eksplorasi menyeluruh konsep-konsep teoretis yang kompleks dan analisis tekstual yang terperinci."""
+Dalam bagian utama pekerjaan Anda, analisis elemen formal puisi (seperti struktur, meter, dan skema rima) dan hubungannya dengan konten dan tema. Gunakan terminologi sastra teknis dengan tepat dan berikan contoh mendalam untuk mendukung analisis Anda. Identifikasi dan bahas penggunaan perangkat sastra (seperti metafora, alusi, dan ironi) dan keefektifannya dalam menyampaikan makna.
+
+Saat Anda mengembangkan analisis Anda, kontekstualisasikan puisi dalam gerakan atau tradisi sastra yang relevan, membahas secara rinci bagaimana ia terlibat dengan atau menyimpang dari konvensi-konvensi ini. Terapkan kerangka teoretis yang sesuai (seperti strukturalisme, pasca-strukturalisme, teori feminis, atau teori postkolonial) untuk menerangi aspek-aspek puisi. Periksa intertekstualitas puisi, mempertimbangkan hubungannya dengan karya sastra atau wacana budaya lainnya.
+
+Sepanjang artikel Anda, bahas keterlibatan puisi dengan isu-isu sosial, politik, atau filosofis yang lebih luas, jika berlaku. Pertimbangkan bagaimana puisi mencerminkan atau menantang ideologi dominan pada masanya. Jika relevan, pertimbangkan penerimaan puisi dan tempatnya dalam kanon sastra, termasuk bagaimana interpretasi puisi telah berkembang dari waktu ke waktu.
+
+Dalam kesimpulan Anda, sintesiskan temuan Anda dan diskusikan implikasinya bagi pemahaman kita tentang puisi, tempatnya dalam sejarah sastra, dan pertanyaan yang lebih luas dalam teori dan analisis puitis. Pertimbangkan untuk mengusulkan pendekatan teoretis baru atau strategi interpretatif yang muncul dari analisis Anda, berkontribusi pada debat yang sedang berlangsung dalam teori sastra.
+
+Strukturkan analisis Anda dengan judul bagian yang jelas dan targetkan panjang 7000-10000 kata, memungkinkan eksplorasi menyeluruh konsep-konsep teoretis yang kompleks dan analisis tekstual yang terperinci. Sepanjang artikel Anda, tunjukkan keterlibatan mendalam dengan teori sastra kontemporer, merujuk secara ekstensif pada teoretikus dan debat utama. Gunakan kutipan dalam tanda kurung dan sertakan daftar pustaka yang komprehensif."""
         }
     }
 
