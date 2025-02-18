@@ -2,6 +2,9 @@ import streamlit as st
 from groq import Groq
 import os
 import json
+from datetime import datetime
+import time
+from counter import RequestCounter
 
 # Initialize Groq client
 client = Groq(
@@ -17,13 +20,8 @@ POET_STYLES = {
 }
 
 GROQ_MODELS = [
-    "llama-3.2-90b-text-preview",
-    "llama-3.2-11b-text-preview",
-    "llama-3.2-11b-vision-preview",
-    "llama-3.2-3b-preview",
-    "llama-3.1-70b-versatile",
+    "llama-3.3-70b-versatile",
     "gemma2-9b-it",
-    "gemma-7b-it",
     "mixtral-8x7b-32768",    
 ]
 
@@ -49,29 +47,9 @@ HOW_IT_WORKS = {
     ]
 }
 
-def increment_request_count():
-    counter_file = "request_counter.json"
-    if os.path.exists(counter_file):
-        with open(counter_file, "r") as f:
-            counter = json.load(f)
-    else:
-        counter = {"total_requests": 0}
-    
-    counter["total_requests"] += 1
-    
-    with open(counter_file, "w") as f:
-        json.dump(counter, f)
-    
-    return counter["total_requests"]
+# Initialize counter
+request_counter = RequestCounter()
 
-def get_request_count():
-    counter_file = "request_counter.json"
-    if os.path.exists(counter_file):
-        with open(counter_file, "r") as f:
-            counter = json.load(f)
-        return counter["total_requests"]
-    return 0
-    
 def load_poet_data(poet_name):
     file_path = os.path.join("poet_samples", f"{poet_name.lower().replace(' ', '_')}.json")
     try:
@@ -245,6 +223,54 @@ Strukturkan analisis Anda dengan judul bagian yang jelas dan targetkan panjang 7
     )
     return chat_completion.choices[0].message.content
 
+# Add rate limiting decorator
+def rate_limit(seconds=1):
+    def decorator(func):
+        last_called = {}
+        def wrapper(*args, **kwargs):
+            current_time = time.time()
+            if func.__name__ in last_called:
+                elapsed = current_time - last_called[func.__name__]
+                if elapsed < seconds:
+                    time.sleep(seconds - elapsed)
+            result = func(*args, **kwargs)
+            last_called[func.__name__] = time.time()
+            return result
+        return wrapper
+    return decorator
+
+# Add caching for poet info
+@st.cache_data(ttl=3600)  # Streamlit's native caching with 1-hour TTL
+def cached_poet_info(poet_name, model, language):
+    """Cached wrapper for poet info generation"""
+    try:
+        return generate_poet_info(poet_name, model, language)
+    except Exception as e:
+        st.error(f"Error generating poet info: {str(e)}")
+        return "Information temporarily unavailable"
+
+# Add export functionality
+def export_poem(poem, poet_style, prompt):
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    filename = f"poem_{timestamp}.txt"
+    
+    content = f"""Generated Poem
+Date: {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}
+Poet Style: {poet_style}
+Prompt: {prompt}
+
+{poem}
+"""
+    
+    return filename, content
+
+# Add model configuration management
+MODEL_CONFIGS = {
+    "llama-3.3-70b-versatile": {"temp": 0.5, "max_tokens": 1000},
+    "gemma2-9b-it": {"temp": 0.7, "max_tokens": 800},
+    "mixtral-8x7b-32768": {"temp": 0.6, "max_tokens": 1200},
+}
+
 def main():
     st.set_page_config(page_title="Poetica, Indonesian Poetry Generator", layout="wide")
 
@@ -277,47 +303,90 @@ def main():
 
         with col2:
             st.markdown("### About the Poet" if language_code == "en" else "### Tentang Penyair")
-            poet_info = generate_poet_info(poet_style, selected_model, language_code)
+            poet_info = cached_poet_info(poet_style, selected_model, language_code)  # Use the new cached function
             st.info(poet_info)
 
         if st.button("Generate Poem" if language_code == "en" else "Hasilkan Puisi", type="primary"):
-            if not prompt:
-                st.warning("Please enter a prompt for your poem." if language_code == "en" else "Mohon masukkan prompt untuk puisi Anda.")
-            elif word_count_prompt > 10:
-                st.warning("Please limit your prompt to 10 words or less." if language_code == "en" else "Mohon batasi prompt Anda hingga 10 kata atau kurang.")
-            else:
-                with st.spinner("Crafting your poem..." if language_code == "en" else "Menyusun puisi Anda..."):
-                    poet_data = load_poet_data(poet_style)
-                    if poet_data:  # Only generate if we have sample poems
-                        poem = generate_poem_with_groq(prompt, poet_style, poet_data, selected_model, language_code)
-                        total_requests = increment_request_count()  # Increment and get the new total
-                        st.success("Your poem is ready!" if language_code == "en" else "Puisi Anda siap!")
-                        st.markdown("### Generated Poem" if language_code == "en" else "### Puisi yang Dihasilkan")
-                        st.markdown(f"```\n{poem}\n```")
-                    else:
-                        st.error("Unable to generate poem due to missing sample data." if language_code == "en" else "Tidak dapat menghasilkan puisi karena data sampel tidak ditemukan.")
+            try:
+                if not prompt:
+                    st.warning("Please enter a prompt for your poem." if language_code == "en" else "Mohon masukkan prompt untuk puisi Anda.")
+                elif word_count_prompt > 10:
+                    st.warning("Please limit your prompt to 10 words or less." if language_code == "en" else "Mohon batasi prompt Anda hingga 10 kata atau kurang.")
+                else:
+                    with st.spinner("Crafting your poem..." if language_code == "en" else "Menyusun puisi Anda..."):
+                        poet_data = load_poet_data(poet_style)
+                        if poet_data:
+                            poem = generate_poem_with_groq(prompt, poet_style, poet_data, selected_model, language_code)
+                            request_counter.increment()
+                            
+                            st.success("Your poem is ready!" if language_code == "en" else "Puisi Anda siap!")
+                            st.markdown("### Generated Poem" if language_code == "en" else "### Puisi yang Dihasilkan")
+                            st.markdown(f"```\n{poem}\n```")
+                            
+                            # Add export button
+                            filename, content = export_poem(poem, poet_style, prompt)
+                            st.download_button(
+                                label="Download Poem" if language_code == "en" else "Unduh Puisi",
+                                data=content,
+                                file_name=filename,
+                                mime="text/plain"
+                            )
+                        else:
+                            st.error("Unable to generate poem due to missing sample data." if language_code == "en" else "Tidak dapat menghasilkan puisi karena data sampel tidak ditemukan.")
+            except Exception as e:
+                st.error(f"An error occurred: {str(e)}" if language_code == "en" else f"Terjadi kesalahan: {str(e)}")
+                
+    # Add session state for analysis history
+    if 'analysis_history' not in st.session_state:
+        st.session_state.analysis_history = []
 
-    # Analysis tabs
+    # Analysis tabs with history
     for tab, analysis_type in zip([tab2, tab3, tab4], ["Aesthetic Theory", "Hermeneutic and Semantics", "Literature Theory"]):
         with tab:
             st.header(f"{analysis_type} Analysis")
             poem_input = st.text_area(f"Enter the poem for {analysis_type} analysis:", height=200)
+            
             if st.button(f"Analyze with {analysis_type}", key=f"analyze_{analysis_type}"):
-                if poem_input:
-                    with st.spinner("Analyzing..."):
-                        analysis = analyze_poem(poem_input, analysis_type, selected_model, language_code)
-                        st.markdown("### Analysis Result")
-                        st.write(analysis)
-                else:
-                    st.warning("Please enter a poem for analysis.")
+                try:
+                    if poem_input:
+                        with st.spinner("Analyzing..."):
+                            analysis = analyze_poem(poem_input, analysis_type, selected_model, language_code)
+                            st.markdown("### Analysis Result")
+                            st.write(analysis)
+                            
+                            # Store in history
+                            st.session_state.analysis_history.append({
+                                'type': analysis_type,
+                                'poem': poem_input[:100] + "...",
+                                'timestamp': datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                            })
+                    else:
+                        st.warning("Please enter a poem for analysis.")
+                except Exception as e:
+                    st.error(f"Analysis failed: {str(e)}")
+
+            # Show analysis history
+            if st.session_state.analysis_history:
+                with st.expander("Analysis History"):
+                    for item in reversed(st.session_state.analysis_history):
+                        st.write(f"**{item['type']}** - {item['timestamp']}")
+                        st.write(f"Poem: {item['poem']}")
+                        st.write("---")
 
     # Footer
     st.markdown("---")
     st.markdown("Built with :orange_heart: thanks to Claude.ai, Groq, Github, Streamlit. :scroll: support my works at https://saweria.co/adnuri", help="cyberariani@gmail.com")
     
-    # Display request count in the footer
-    total_requests = get_request_count()
-    st.markdown(f"Total requests: {total_requests}")
+    # Update footer to show detailed stats
+    counts = request_counter.get_counts()
+    st.markdown("---")
+    col1, col2, col3 = st.columns(3)
+    with col1:
+        st.metric("Total Requests", counts["total_requests"])
+    with col2:
+        st.metric("Today's Requests", counts["today"])
+    with col3:
+        st.metric("This Month's Requests", counts["this_month"])
 
 if __name__ == "__main__":
     main()
