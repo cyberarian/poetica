@@ -1,0 +1,329 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Source+Sans+Pro:wght@400;600&display=swap');
+
+:root {
+    /* Light theme */
+    --primary-color: #6b4423;
+    --secondary-color: #8b5e34;
+    --accent-color: #d4a373;
+    --background-color: #fefae0;
+    --text-color: #463f3a;
+    --poetry-bg: rgba(255, 255, 255, 0.9);
+    --poetry-text: #2c3e50;
+}
+
+[data-theme="dark"] {
+    --primary-color: #d4a373;
+    --secondary-color: #b08968;
+    --accent-color: #e6ccb2;
+    --background-color: #2c3e50;
+    --text-color: #e0e0e0;
+    --poetry-bg: rgba(0, 0, 0, 0.3);
+    --poetry-text: #e0e0e0;
+}
+
+/* Add smooth transitions */
+body {
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.poetry-container, .poetry-text, .stanza {
+    transition: all 0.3s ease;
+}
+
+body {
+    background-color: var(--background-color);
+    color: var(--text-color);
+    font-family: 'Source Sans Pro', sans-serif;
+    line-height: 1.6;
+}
+
+/* Main typography */
+.main-title {
+    font-family: 'Playfair Display', serif;
+    font-weight: 700;
+    color: var(--primary-color);
+    font-size: 3.5rem;
+    text-align: center;
+    margin-bottom: 1rem;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Update poetry text container styling */
+.poetry-container {
+    max-width: 800px;
+    margin: 0.5rem auto;
+    padding: 2rem;
+    background: rgba(78, 77, 78, 0.555);  /* Fixed invalid background value */
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    text-align: center;
+}
+
+.poetry-text {
+    font-family: 'Georgia', serif;
+    font-size: 1.2rem;
+    line-height: 1.8;
+    color: #8b8e91;
+    white-space: pre-wrap;
+    margin-bottom: 2rem;
+    padding: 2.5rem;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 12px;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+    position: relative;
+    letter-spacing: 0.03em;
+}
+
+/* Add new stanza styling */
+.poetry-text p {
+    margin-bottom: 0.8rem;
+}
+
+.poetry-text br + br {
+    display: none;  /* Remove double line breaks */
+}
+
+/* Style the title differently */
+.poetry-text strong {
+    font-size: 1.2rem;
+    display: block;
+    margin-bottom: 1.5rem;
+    font-family: 'Playfair Display', serif;
+    color: #1e1e1e;
+}
+
+.poetry-text::before {
+    content: '❝';
+    position: absolute;
+    top: -20px;
+    left: 20px;
+    font-size: 3rem;
+    color: var(--accent-color);
+}
+
+/* Style the poem title */
+.poetry-text strong:first-child,
+.poetry-text p:first-child {
+    font-size: 1.6rem;
+    color: var(--accent-color);
+    margin-bottom: 2rem;
+    text-align: center;
+    display: block;
+    font-weight: 700;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Style each stanza */
+.stanza {
+    margin-bottom: 1.5rem;
+    padding: 0.5rem 0;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.stanza:hover {
+    background: rgba(255, 255, 255, 0.03);
+    transform: translateX(5px);
+}
+
+/* Add decorative elements */
+.poetry-text::before,
+.poetry-text::after {
+    content: '❋';
+    position: absolute;
+    font-size: 1.5rem;
+    color: var(--accent-color);
+    opacity: 0.6;
+}
+
+.poetry-text::before {
+    top: 1rem;
+    left: 1rem;
+}
+
+.poetry-text::after {
+    bottom: 1rem;
+    right: 1rem;
+}
+
+/* Copy button styling */
+.copy-btn {
+    background: var(--accent-color);
+    color: var(--background-color);
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 25px;
+    cursor: pointer;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 1rem auto;
+    transition: all 0.2s ease;
+}
+
+.copy-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.copy-btn span {
+    font-size: 1.2rem;
+}
+
+/* Copy success message */
+.copy-success {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    background: var(--accent-color);
+    color: var(--background-color);
+    padding: 0.75rem 1.5rem;
+    border-radius: 25px;
+    animation: slideIn 0.3s ease-out;
+    z-index: 1000;
+}
+
+@keyframes slideIn {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+/* Dark theme specific adjustments */
+@media (prefers-color-scheme: dark) {
+    .poetry-container {
+        background: rgba(0, 0, 0, 0.2);
+    }
+    
+    .poetry-text {
+        background: rgba(0, 0, 0, 0.3);
+        color: #e0e0e0;
+    }
+}
+
+.poetry-text::before {
+    content: '❝';
+    position: absolute;
+    top: -20px;
+    left: 20px;
+    font-size: 3rem;
+    color: var(--accent-color);
+}
+
+.stanza {
+    margin-bottom: 1.5rem;
+}
+
+.poetry-text-input {
+    font-family: 'Noto Serif', serif;
+    font-size: 1.1rem;
+    line-height: 1.8;
+}
+
+/* UI elements */
+.ui-text {
+    font-family: 'Inter', sans-serif;
+}
+
+.sidebar .ui-text {
+    font-size: 0.9rem;
+}
+
+/* Analysis text */
+.analysis-text {
+    font-family: 'Noto Serif', serif;
+    font-size: 1.1rem;
+    line-height: 1.8;
+    padding: 1.5rem;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+/* Custom markdown styling */
+.st-ae {
+    font-family: 'Inter', sans-serif;
+}
+
+.prose-text {
+    font-family: 'Noto Serif', serif;
+    font-size: 1.2rem;
+    line-height: 1.7;
+    text-align: center;
+    color: var(--secondary-color);
+    margin-bottom: 2rem;
+}
+
+/* Custom Streamlit elements styling */
+.stButton > button {
+    background-color: var(--primary-color);
+    color: white;
+    border-radius: 25px;
+    padding: 0.5rem 2rem;
+    font-size: 1.1rem;
+    transition: transform 0.2s;
+}
+
+.stButton > button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.stTextArea > div > div > textarea {
+    border-radius: 10px;
+    border: 2px solid var(--accent-color);
+    padding: 1rem;
+    font-size: 1.1rem;
+}
+
+.sidebar .sidebar-content {
+    background-color: var(--background-color);
+}
+
+/* Animation classes */
+.fade-in {
+    animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.slide-up {
+    animation: slideUp 0.5s ease-out;
+}
+
+@keyframes slideUp {
+    from { transform: translateY(20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+/* Theme toggle button */
+.theme-toggle {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    background: var(--accent-color);
+    color: var(--background-color);
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    transition: transform 0.2s ease;
+    z-index: 1000;
+}
+
+.theme-toggle:hover {
+    transform: scale(1.1);
+}
+
+.theme-toggle svg {
+    width: 20px;
+    height: 20px;
+}

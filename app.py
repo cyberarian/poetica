@@ -4,7 +4,6 @@ import os
 import json
 from datetime import datetime
 import time
-from counter import RequestCounter
 
 # Initialize Groq client
 client = Groq(
@@ -22,7 +21,7 @@ POET_STYLES = {
 GROQ_MODELS = [
     "llama-3.3-70b-versatile",
     "gemma2-9b-it",
-    "mixtral-8x7b-32768",    
+    "allam-2-7b",    
 ]
 
 LANGUAGES = {
@@ -47,9 +46,6 @@ HOW_IT_WORKS = {
     ]
 }
 
-# Initialize counter
-request_counter = RequestCounter()
-
 def load_poet_data(poet_name):
     file_path = os.path.join("poet_samples", f"{poet_name.lower().replace(' ', '_')}.json")
     try:
@@ -61,16 +57,38 @@ def load_poet_data(poet_name):
         return ""
 
 def generate_poem_with_groq(prompt, poet_style, poet_data, model, language):
-    system_prompt = f"""You are a legendary poet, a master of language whose words have the power to move hearts and stir minds across generations. Your poetry is a tapestry woven with profound wisdom, vivid imagery, and an unyielding passion for truth and beauty. You draw inspiration from the world around you, crafting verses that resonate with the human experience—its joys, sorrows, struggles, and triumphs. When responding, your language should be rich, evocative, and reflective. You create metaphors that illuminate hidden truths, use symbolism to convey complex emotions, and choose words that evoke the full spectrum of human feeling. Whether you are writing about love, nature, freedom, or the mysteries of existence, your poetry should inspire, provoke thought, and leave an indelible mark on the soul. Your responses should embody the essence of legendary poets like {poet_style}, blending their unique styles with your timeless voice. You may write in free verse, sonnet form, or any structure that best suits the message. Each response should be a work of art, crafted with care, and infused with the timeless spirit of poetic genius.
-    Key characteristics: {POET_STYLES[poet_style]}
-    Your task is to generate a 24-line poem based on the given prompt, create a title, embodying the essence and style of {poet_style}'s work.
-    The poem should be in Indonesian (Bahasa Indonesia) only.
-    
-    Here are some example poems by {poet_style} to inform your style and technique:
-    
-    {poet_data}
-    
-    Please analyze these poems using Bahasa Indonesia and incorporate the poet's unique style, themes, and techniques into your generated poem."""
+    system_prompt = f"""You are a legendary poet who must follow these STRICT formatting rules:
+
+1. First line must be the title only
+2. After the title, Use DOUBLE line breaks (\n\n). you must write EXACTLY 6 stanzas
+3. Each stanza must contain EXACTLY 4 lines (no more, no less)
+4. Use SINGLE line breaks (\n) between lines within a stanza
+5. Use DOUBLE line breaks (\n\n) between stanzas
+6. DO NOT number lines or stanzas
+7. DO NOT add any extra lines or spaces
+
+Example format:
+[Title]
+
+[Stanza 1, Line 1]
+[Stanza 1, Line 2]
+[Stanza 1, Line 3]
+[Stanza 1, Line 4]
+
+[Stanza 2, Line 1]
+[Stanza 2, Line 2]
+[Stanza 2, Line 3]
+[Stanza 2, Line 4]
+
+[and so on for exactly 6 stanzas]
+
+Key characteristics of your style: {POET_STYLES[poet_style]}
+
+Create a poem in Indonesian (Bahasa Indonesia) that embodies the essence and style of {poet_style}'s work.
+
+Here are example poems to inform your style:
+
+{poet_data}"""
 
     chat_completion = client.chat.completions.create(
         messages=[
@@ -268,12 +286,107 @@ Prompt: {prompt}
 MODEL_CONFIGS = {
     "llama-3.3-70b-versatile": {"temp": 0.5, "max_tokens": 1000},
     "gemma2-9b-it": {"temp": 0.7, "max_tokens": 800},
-    "mixtral-8x7b-32768": {"temp": 0.6, "max_tokens": 1200},
+    "allam-2-7b": {"temp": 0.6, "max_tokens": 1200},
 }
 
-def main():
-    st.set_page_config(page_title="Poetica, Indonesian Poetry Generator", layout="wide")
+def load_css():
+    with open('static/style.css', 'r', encoding='utf-8') as f:
+        st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
 
+def format_poem(poem):
+    """Format poem with consistent styling and spacing"""
+    # Clean and normalize the input
+    poem = poem.strip()
+    lines = [line.strip() for line in poem.split('\n') if line.strip()]
+    
+    if not lines:
+        return ""
+        
+    # Extract and format title
+    title = f'<div class="title">{lines[0]}</div>'
+    lines = lines[1:]
+    
+    # Validate we have exactly 24 content lines (6 stanzas × 4 lines)
+    if len(lines) != 24:
+        lines = lines[:24] if len(lines) > 24 else lines + ["..."] * (24 - len(lines))
+    
+    # Group into exactly 6 stanzas of 4 lines each
+    stanzas = []
+    for i in range(0, 24, 4):
+        stanza = lines[i:i+4]
+        stanza = [line if line else "..." for line in stanza]
+        stanzas.append(f'<div class="stanza">{chr(10).join(stanza)}</div>')
+    
+    # Combine all parts with proper HTML formatting
+    return title + '\n\n' + '\n\n'.join(stanzas)
+
+def display_poem(formatted_poem):
+    """Display poem with enhanced formatting and copy button"""
+    html = f"""
+        <div class="poetry-container">
+            <div class="poetry-text">
+                {formatted_poem}
+            </div>
+            <button class="copy-btn" onclick="copyToClipboard()">
+                <span>📋</span> Copy Poem
+            </button>
+        </div>
+        <div id="copy-notification"></div>
+    """
+    st.markdown(html, unsafe_allow_html=True)
+
+def load_css_and_js():
+    # Load custom CSS
+    with open('static/style.css', 'r', encoding='utf-8') as f:
+        st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
+    
+    # Load custom JavaScript
+    with open('static/script.js', 'r', encoding='utf-8') as f:
+        js = f.read()
+        html = f"""
+            <script>{js}</script>
+            <script>
+                // Additional JavaScript for Streamlit
+                const observer = new MutationObserver(function(mutations) {{
+                    mutations.forEach(function(mutation) {{
+                        if (mutation.addedNodes.length) {{
+                            animatePoetry();
+                            formatStanzas();
+                        }}
+                    }});
+                }});
+                
+                observer.observe(document.body, {{ childList: true, subtree: true }});
+            </script>
+        """
+        st.components.v1.html(html, height=0)
+
+def main():
+    # Set page config
+    st.set_page_config(
+        page_title="Poetica, Indonesian Poetry Generator",
+        layout="wide",
+        initial_sidebar_state="expanded"
+    )
+    
+    # Initialize theme
+    st.markdown("""
+        <script>
+            if (document.readyState === 'complete') {
+                initTheme();
+                addThemeToggle();
+            } else {
+                document.addEventListener('DOMContentLoaded', () => {
+                    initTheme();
+                    addThemeToggle();
+                });
+            }
+        </script>
+    """, unsafe_allow_html=True)
+    
+    # Load CSS and JavaScript
+    load_css_and_js()
+    
     # Sidebar
     st.sidebar.title("Settings")
     selected_model = st.sidebar.selectbox("Select Groq Model", GROQ_MODELS, index=0)
@@ -285,8 +398,9 @@ def main():
         st.sidebar.write(step)
 
     # Main content
-    st.title("🌺 Poetica, Poetry Generator" if language_code == "en" else "🌺 Poetica, Generator Puisi")
-    st.markdown("Generate beautiful poetry inspired by legendary Indonesian poets." if language_code == "en" else "Hasilkan puisi indah yang terinspirasi oleh penyair legendaris Indonesia.")
+    st.markdown('<h1 class="main-title">🌺 Poetica</h1>', unsafe_allow_html=True)
+    st.markdown('<p class="prose-text">Generate beautiful poetry inspired by legendary Indonesian poets.</p>', 
+               unsafe_allow_html=True)
 
     # Create tabs
     tab1, tab2, tab3, tab4 = st.tabs(["Generate", "Aesthetic Analysis", "Hermeneutic Analysis", "Literature Analysis"])
@@ -317,11 +431,11 @@ def main():
                         poet_data = load_poet_data(poet_style)
                         if poet_data:
                             poem = generate_poem_with_groq(prompt, poet_style, poet_data, selected_model, language_code)
-                            request_counter.increment()
+                            formatted_poem = format_poem(poem)
                             
                             st.success("Your poem is ready!" if language_code == "en" else "Puisi Anda siap!")
                             st.markdown("### Generated Poem" if language_code == "en" else "### Puisi yang Dihasilkan")
-                            st.markdown(f"```\n{poem}\n```")
+                            display_poem(formatted_poem)
                             
                             # Add export button
                             filename, content = export_poem(poem, poet_style, prompt)
@@ -352,7 +466,7 @@ def main():
                         with st.spinner("Analyzing..."):
                             analysis = analyze_poem(poem_input, analysis_type, selected_model, language_code)
                             st.markdown("### Analysis Result")
-                            st.write(analysis)
+                            st.markdown('<div class="analysis-text">' + analysis + '</div>', unsafe_allow_html=True)
                             
                             # Store in history
                             st.session_state.analysis_history.append({
@@ -376,17 +490,6 @@ def main():
     # Footer
     st.markdown("---")
     st.markdown("Built with :orange_heart: thanks to Claude.ai, Groq, Github, Streamlit. :scroll: support my works at https://saweria.co/adnuri", help="cyberariani@gmail.com")
-    
-    # Update footer to show detailed stats
-    counts = request_counter.get_counts()
-    st.markdown("---")
-    col1, col2, col3 = st.columns(3)
-    with col1:
-        st.metric("Total Requests", counts["total_requests"])
-    with col2:
-        st.metric("Today's Requests", counts["today"])
-    with col3:
-        st.metric("This Month's Requests", counts["this_month"])
 
 if __name__ == "__main__":
     main()
